@@ -1,6 +1,5 @@
-# ExpenseApp
-
-A new Flutter project.
+# Personal Expenses App
+Flutter App for keep track and manage personal expenses over a period of seven days.
 
 ## Getting Started
 
