@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // ),
   ];
 
+  bool _showChart = false;
   List<Transaction> get _recentTransactions {
     return _userTransactions.where((tx) {
       return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
@@ -84,42 +87,90 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
+    final appBar = AppBar(
+      backgroundColor: Colors.deepPurple,
+      title: Text('Personal Expenses'),
+      actions: <Widget>[
+        IconButton(
+            icon: Icon(
+              Icons.add,
+              color: Colors.limeAccent,
+            ),
+            onPressed: () => _startAddNewTransaction(context))
+      ],
+    );
     return Scaffold(
       //backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
-        title: Text('Personal Expenses'),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(
-                Icons.add,
-                color: Colors.limeAccent,
-              ),
-              onPressed: () => _startAddNewTransaction(context))
-        ],
-      ),
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Chart(_recentTransactions),
-            TransactionList(_userTransactions, _deleteTransaction),
+            if (isLandscape)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Switch.adaptive(
+                      value: _showChart,
+                      onChanged: (val) {
+                        setState(() {
+                          _showChart = val;
+                        });
+                      })
+                ],
+              ),
+            if (!isLandscape)
+              Container(
+                height: (mediaQuery.size.height -
+                        appBar.preferredSize.height -
+                        mediaQuery.padding.top) *
+                    0.4,
+                child: Chart(_recentTransactions),
+              ),
+            if (!isLandscape)
+              Container(
+                  height: (mediaQuery.size.height -
+                          appBar.preferredSize.height -
+                          mediaQuery.padding.top) *
+                      0.6,
+                  child:
+                      TransactionList(_userTransactions, _deleteTransaction)),
+            if (isLandscape)
+              _showChart
+                  ? Container(
+                      height: (mediaQuery.size.height -
+                              appBar.preferredSize.height -
+                              mediaQuery.padding.top) *
+                          0.4,
+                      child: Chart(_recentTransactions),
+                    )
+                  : Container(
+                      height: (mediaQuery.size.height -
+                              appBar.preferredSize.height -
+                              mediaQuery.padding.top) *
+                          0.6,
+                      child: TransactionList(
+                          _userTransactions, _deleteTransaction)),
           ],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.deepPurple,
-        child: Icon(
-          Icons.add,
-          color: Colors.limeAccent,
-        ),
-        elevation: 5,
-        onPressed: () {
-          _startAddNewTransaction(context);
-        },
-      ),
+      floatingActionButton: Platform.isIOS
+          ? Container()
+          : FloatingActionButton(
+              backgroundColor: Colors.deepPurple,
+              child: Icon(
+                Icons.add,
+                color: Colors.limeAccent,
+              ),
+              elevation: 5,
+              onPressed: () {
+                _startAddNewTransaction(context);
+              },
+            ),
     );
   }
 }
