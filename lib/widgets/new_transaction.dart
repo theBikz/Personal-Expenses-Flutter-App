@@ -62,7 +62,7 @@ class _NewTransactionState extends State<NewTransaction> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               TextField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     labelText: 'Title', border: InputBorder.none),
                 controller: _titleController, onSubmitted: (_) => _submitData(),
                 // onChanged: (val) {
@@ -70,7 +70,7 @@ class _NewTransactionState extends State<NewTransaction> {
                 // },
               ),
               TextField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     labelText: 'Amount', border: InputBorder.none),
                 controller: _amountController,
                 keyboardType: TextInputType.number,
@@ -88,7 +88,7 @@ class _NewTransactionState extends State<NewTransaction> {
                     ),
                     FlatButton(
                         onPressed: _presentDatePicker,
-                        child: Text(
+                        child: const Text(
                           'Choose Date',
                           style: TextStyle(color: Colors.deepPurple),
                         ))
@@ -97,7 +97,7 @@ class _NewTransactionState extends State<NewTransaction> {
               ),
               RaisedButton(
                   color: Colors.deepPurple,
-                  child: Text('Add Transaction'),
+                  child: const Text('Add Transaction'),
                   textColor: Colors.white,
                   onPressed: _submitData),
             ],

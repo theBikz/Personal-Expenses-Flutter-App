@@ -85,16 +85,66 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  List<Widget> _buildLandscapeContent(
+      MediaQueryData mediaQuery, AppBar appBar) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Switch.adaptive(
+              value: _showChart,
+              onChanged: (val) {
+                setState(() {
+                  _showChart = val;
+                });
+              })
+        ],
+      ),
+      _showChart
+          ? Container(
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      mediaQuery.padding.top) *
+                  0.4,
+              child: Chart(_recentTransactions),
+            )
+          : Container(
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      mediaQuery.padding.top) *
+                  0.6,
+              child: TransactionList(_userTransactions, _deleteTransaction))
+    ];
+  }
+
+  List<Widget> _buildPotraitContent(MediaQueryData mediaQuery, AppBar appBar) {
+    return [
+      Container(
+        height: (mediaQuery.size.height -
+                appBar.preferredSize.height -
+                mediaQuery.padding.top) *
+            0.4,
+        child: Chart(_recentTransactions),
+      ),
+      Container(
+          height: (mediaQuery.size.height -
+                  appBar.preferredSize.height -
+                  mediaQuery.padding.top) *
+              0.6,
+          child: TransactionList(_userTransactions, _deleteTransaction))
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final isLandscape = mediaQuery.orientation == Orientation.landscape;
     final appBar = AppBar(
       backgroundColor: Colors.deepPurple,
-      title: Text('Personal Expenses'),
+      title: const Text('Personal Expenses'),
       actions: <Widget>[
         IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.add,
               color: Colors.limeAccent,
             ),
@@ -109,51 +159,8 @@ class _MyHomePageState extends State<MyHomePage> {
           // mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            if (isLandscape)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Switch.adaptive(
-                      value: _showChart,
-                      onChanged: (val) {
-                        setState(() {
-                          _showChart = val;
-                        });
-                      })
-                ],
-              ),
-            if (!isLandscape)
-              Container(
-                height: (mediaQuery.size.height -
-                        appBar.preferredSize.height -
-                        mediaQuery.padding.top) *
-                    0.4,
-                child: Chart(_recentTransactions),
-              ),
-            if (!isLandscape)
-              Container(
-                  height: (mediaQuery.size.height -
-                          appBar.preferredSize.height -
-                          mediaQuery.padding.top) *
-                      0.6,
-                  child:
-                      TransactionList(_userTransactions, _deleteTransaction)),
-            if (isLandscape)
-              _showChart
-                  ? Container(
-                      height: (mediaQuery.size.height -
-                              appBar.preferredSize.height -
-                              mediaQuery.padding.top) *
-                          0.4,
-                      child: Chart(_recentTransactions),
-                    )
-                  : Container(
-                      height: (mediaQuery.size.height -
-                              appBar.preferredSize.height -
-                              mediaQuery.padding.top) *
-                          0.6,
-                      child: TransactionList(
-                          _userTransactions, _deleteTransaction)),
+            if (isLandscape) ..._buildLandscapeContent(mediaQuery, appBar),
+            if (!isLandscape) ..._buildPotraitContent(mediaQuery, appBar),
           ],
         ),
       ),
@@ -162,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ? Container()
           : FloatingActionButton(
               backgroundColor: Colors.deepPurple,
-              child: Icon(
+              child: const Icon(
                 Icons.add,
                 color: Colors.limeAccent,
               ),
